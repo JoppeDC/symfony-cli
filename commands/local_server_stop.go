@@ -20,8 +20,11 @@
 package commands
 
 import (
+	"errors"
+	"io/fs"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/symfony-cli/console"
 	"github.com/symfony-cli/symfony-cli/local/pid"
@@ -55,7 +58,7 @@ var localServerStopCmd = &console.Command{
 				dirs = append(dirs, dir)
 			}
 		} else {
-			projectDir, err := getProjectDir(c.String("dir"))
+			projectDir, err := getProjectDirForStop(c.String("dir"))
 			if err != nil {
 				return err
 			}
@@ -78,7 +81,7 @@ func stopProjects(dirs []string, allFlag bool) error {
 	}
 
 	for _, dir := range dirs {
-		projectDir, err := getProjectDir(dir)
+		projectDir, err := getProjectDirForStop(dir)
 		runningProcessesForProject := 0
 		if err != nil {
 			return err
@@ -144,4 +147,13 @@ func stopProjects(dirs []string, allFlag bool) error {
 	}
 
 	return nil
+}
+
+func getProjectDirForStop(dir string) (string, error) {
+	projectDir, err := getProjectDir(dir)
+	if err == nil || !errors.Is(err, fs.ErrNotExist) {
+		return projectDir, err
+	}
+
+	return filepath.Abs(dir)
 }
