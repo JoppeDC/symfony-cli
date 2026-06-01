@@ -25,7 +25,7 @@ import (
 	"testing"
 )
 
-func TestGetProjectDirForStopDeletedDirectory(t *testing.T) {
+func TestGetProjectDirForStop_DeletedDirectory(t *testing.T) {
 	dir := t.TempDir()
 	if err := os.Remove(dir); err != nil {
 		t.Fatal(err)
@@ -46,7 +46,7 @@ func TestGetProjectDirForStopDeletedDirectory(t *testing.T) {
 	}
 }
 
-func TestStopProjectsDeletedDirectory(t *testing.T) {
+func TestStopProjects_DeletedDirectory(t *testing.T) {
 	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
 
 	dir := t.TempDir()
